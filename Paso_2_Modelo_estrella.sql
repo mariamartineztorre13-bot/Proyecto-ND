@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS proyecto_final.dim_garantias                    CASCADE;
 -- =========================================================
 
 CREATE TABLE proyecto_final.dim_productos (
-    nueva_formula                                    VARCHAR(100)    PRIMARY KEY,
+    nueva_formula                                    VARCHAR(100)    PRIMARY key NOT NULL,
     nom_cliente                                      VARCHAR(100)    NOT NULL,
     nom_formula_detalle                              VARCHAR(100)    NOT NULL,
     union_form_codigo                                VARCHAR(100)    NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE proyecto_final.dim_productos (
 
 
 CREATE TABLE proyecto_final.dim_destinos (
-    city_insured                                     VARCHAR(100)    PRIMARY KEY,
+    city_insured                                     VARCHAR(100)    PRIMARY key  NOT NULL,
     destino_final                                    VARCHAR(100)    NOT NULL
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE proyecto_final.dim_garantias (
     nom_cause_d_intervention                         VARCHAR(255),
     nom_detail_caused_intervention                   VARCHAR(255),
     garantia                                         VARCHAR(255),
-    concatenacion_gar                                VARCHAR(101)    PRIMARY KEY,
+    concatenacion_gar                                VARCHAR(101)    PRIMARY key   NOT NULL,
     agrupacion_1                                     VARCHAR(255)    NOT NULL,
     agrupacion_2                                     VARCHAR(255)    NOT NULL
 );

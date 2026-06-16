@@ -65,14 +65,17 @@ code {
 
 # 1. Resumen Ejecutivo
 
+<br>
+
+Este resumen ejecutivo sintetiza el planteamiento, la metodología y los hallazgos críticos del análisis técnico-financiero aplicado a la cartera de seguros de viaje de la entidad aseguradora (660.431 observaciones) durante el trienio histórico acumulado 2023-2025.
+
+La entidad presentaba una inconsistencia técnica y financiera en el margen de su cartera de seguros de viaje, caracterizada por una alta exposición a pérdidas y una fuerte erosión de la rentabilidad neta. Este problema estructural estaba motivado, en primer lugar, por una infratarificación estructural visible en la devaluación sistemática de la prima emitida media en los canales de mediación y colectivos (B2B), donde los precios promedio cayeron de forma de los $18$ € a solo $12$ € por asegurado, resultando del todo insuficientes para absorber la siniestralidad de la cartera. En segundo lugar, se sumaba la erosión provocada por los altos costes de adquisición bajo un esquema de comisiones sumamente rígido con determinados intermediarios, alcanzando tasas medias de comisión de hasta el $40\%$ que asfixiaban directamente el ratio combinado neto de la compañía. Finalmente, el tercer factor crítico de pérdida radicaba en la falta de control en la acumulación de riesgos debido a una excesiva concentración de pólizas colectivas masivas sin recargos específicos por tamaño de grupo, lo que disparaba la probabilidad de registrar siniestros de alta severidad médica en el extranjero que superaban con creces los costes medios habituales de $800$ € y llegaban a registrar picos individuales catastróficos de hasta $389.782,27$ € en el destino Mundo.
 
 
-•	¿Cuál era el problema? 
-
-•	¿Qué análisis se realizó? 
+Para diagnosticar y modelar el comportamiento del riesgo de la cartera de forma científica, se llevó a cabo un análisis multidimensional integral estructurado en tres dimensiones clave que abarcan los canales de distribución, las líneas de producto y los corredores, mediante la integración de tres disciplinas tecnológicas fundamentales. En primer lugar, en el área de la ingeniería de datos sobre la plataforma PostgreSQL, se implementó un proceso ETL de limpieza y calidad de datos diseñado para corregir anomalías severas como duraciones de viaje nulas o negativas, estructurando una capa semántica de vistas lógicas optimizadas para su posterior explotación analítica. A continuación, en la vertiente de la inteligencia de negocio con Power BI, se construyó un modelo dimensional en estrella y se programaron métricas DAX específicas del sector asegurador —tales como Loss Ratio, Prima Media por Asegurado, Coste Medio por Expediente y Ratio Combinado con Comisiones— para evaluar de forma interactiva la rentabilidad acumulada y anual de cada segmento. Por último, en la fase del modelado de análisis predictivo mediante Python, dado que la siniestralidad de la cartera presenta una distribución de cola pesada extrema con una inflación de ceros superior al $75\%$, se entrenaron modelos de regresión logística de alta significatividad estadística ($p = 0.000$) orientados a predecir la probabilidad de ocurrencia de un siniestro en función de la duración del viaje, el tamaño del grupo y la segmentación del destino geográfico.
 
 
-•	¿Qué resultados se obtuvieron?
+Los resultados más significativos obtenidos del estudio permitieron establecer decisiones estratégicas clave para la supervivencia financiera de la compañía. En primer lugar, se evidenció una marcada asimetría de canales, donde el canal directo B2C se consolidó como el pilar de solvencia de la aseguradora (alcanzando el $85\%$ de la producción en 2025) gracias a su sólido poder de fijación de precios, que elevó la prima media a $58$ € y mantuvo un Ratio Combinado saludable del $80,94\%$, mientras que el canal B2B se desplomó técnicamente hasta entrar en pérdidas con un Ratio Combinado del $100,26\%$ debido a tarifas insostenibles. En segundo lugar, los modelos predictivos confirmaron el impacto exponencial de los grupos y el destino, determinando que, aunque cada día adicional de viaje incrementa la probabilidad de siniestro en un $1,20\%$ ($OR = 1,0120$), el verdadero multiplicador es el tamaño del grupo en viajes internacionales; mientras que en el destino Nacional cada persona adicional en la póliza eleva el riesgo un moderado $+2,45\%$, en la modalidad Mundo el riesgo se dispara un $+13,57\%$ por cada asegurado adicional ($OR = 1,1357$), exigiendo la aplicación inmediata de tarifas dinámicas con recargos por grupo. En tercer lugar, se constató un saneamiento exitoso de productos deficitarios como Schengen, que tras encadenar pérdidas severas en 2023 ($133,18\%$) y 2024 ($106,92\%$), fue objeto de una contracción preventiva del negocio del $-70,6\%$ en 2025, logrando depurar la cartera y reconducir su Ratio Combinado a un excelente $64,17\%$. Finalmente, la segmentación estratégica de corredores demostró que la rentabilidad neta descansaba sobre el socio estrella Mundo Ideal (MNO), que aportó el $66,8\%$ del volumen histórico con un excelente control del riesgo (Ratio Combinado constante $\approx 80\%$), mientras que la cuenta de Viajes Sorpresas (MOG) operaba como un lastre técnico severo debido a un underpricing extremo (prima de $11$ € frente a siniestros de $1.027$ € de coste medio), lo que justificó plenamente la rescisión de sus acuerdos comerciales en 2025 para frenar la destrucción de valor.
 
 
 <br>
@@ -864,7 +867,7 @@ Para realizar el modelo estrella primero se crearon las tablas y se estableciero
 -- =========================================================
 
 CREATE TABLE proyecto_final.dim_productos (
-    nueva_formula                                    VARCHAR(100)    PRIMARY KEY,
+    nueva_formula                                    VARCHAR(100)    PRIMARY KEY   NOT NULL,
     nom_cliente                                      VARCHAR(100)    NOT NULL,
     nom_formula_detalle                              VARCHAR(100)    NOT NULL,
     union_form_codigo                                VARCHAR(100)    NOT NULL,
@@ -876,7 +879,7 @@ CREATE TABLE proyecto_final.dim_productos (
 
 
 CREATE TABLE proyecto_final.dim_destinos (
-    city_insured                                     VARCHAR(100)    PRIMARY KEY,
+    city_insured                                     VARCHAR(100)    PRIMARY KEY   NOT NULL,
     destino_final                                    VARCHAR(100)    NOT NULL
 );
 
@@ -886,7 +889,7 @@ CREATE TABLE proyecto_final.dim_garantias (
     nom_cause_d_intervention                         VARCHAR(255),
     nom_detail_caused_intervention                   VARCHAR(255),
     garantia                                         VARCHAR(255),
-    concatenacion_gar                                VARCHAR(101)    PRIMARY KEY,
+    concatenacion_gar                                VARCHAR(101)    PRIMARY KEY   NOT NULL,
     agrupacion_1                                     VARCHAR(255)    NOT NULL,
     agrupacion_2                                     VARCHAR(255)    NOT NULL
 );
@@ -2118,14 +2121,16 @@ generar_tabla_rentabilidad_flex <- function(datos, titulo, variable_agrupacion) 
       Ratio_Siniestralidad = (Total_Siniestros / Total_Primas_Adq) * 100,
       Ratio_Con_Comision = Ratio_Siniestralidad + Pct_Comision,
       Coste_Medio = Total_Siniestros / Expedientes,
-      Tasa_Frecuencia = (Expedientes / Total_Asegurados) * 100
+      Tasa_Frecuencia = (Expedientes / Total_Asegurados) * 100,
+      Prima_Emitida_Media = Total_Primas / Total_Asegurados
+      
     ) %>%
     select(-Total_Comision) %>%
     arrange(desc(!!var_sym != "TOTAL"), desc(Total_Primas))
   
   # 4. Formateo (Igual que antes)
   tabla_formateada <- final_df %>%
-    mutate(across(c(Total_Primas, Total_Primas_Adq, Total_Siniestros, Coste_Medio), ~ paste(format(round(., 0), big.mark = "."), "€"))) %>%
+    mutate(across(c(Total_Primas, Total_Primas_Adq, Total_Siniestros, Coste_Medio,Prima_Emitida_Media ), ~ paste(format(round(., 0), big.mark = "."), "€"))) %>%
     mutate(across(c(Expedientes, Total_Asegurados), ~ format(round(., 0), big.mark = "."))) %>%
     mutate(across(c(Pct_Comision, Ratio_Siniestralidad, Ratio_Con_Comision, Tasa_Frecuencia), ~ paste(round(., 2), "%")))
   
@@ -2141,12 +2146,14 @@ generar_tabla_rentabilidad_flex(primas_limpias_2, "Rentabilidad por Canal", "tip
 
 ```
 
-Analizando el el histórico acumulado de los 3 años se sacan la ssiguientes conlcusiones:
+Analizando el el histórico acumulado de los 3 años se sacan las siguientes conclusiones:
 
-- **El motor del negocio (B2C)**: Es el canal dominante con unagran diferencia, aportando más de 45.4 millones de € en primas (casi el 74% del negocio total). Es un canal muy sano y predecible: aunque tiene una comisión alta (39.95%), su ratio de siniestralidad es sumamente bajo y controlado (41.07%), dejando un Ratio Combinado Neto muy rentable del 81.02%, qué esta en línea al 80% establecido por la compañía. 
+- **El motor del negocio (B2C)**: Es el canal dominante con una gran diferencia, aportando más de 45.4 millones de € en primas (casi el 74% del negocio total). Es un canal muy sano y predecible: aunque tiene una comisión alta (39.95%), su ratio de siniestralidad es sumamente bajo y controlado (41.07%), dejando un Ratio Combinado Neto muy rentable del 81.02%, qué esta en línea al 80% establecido por la compañía. 
 Los corredores que se encuentran en esta tipología son *Mundo ideal (MNO)* (puro), *Trotamundos (TRF)* (mix tipo canal), *Bienestar (BDF)* (mix tipo canal), *Viajes sorpresas (MOG)* (mix tipo canal) y  Lluvia de viajes (ANB) (mix tipo canal).
 
 - **El canal problemático (B2B)**: Ha aportado 15.5 millones de €, pero sus ratios técnicas son preocupantes. Tiene una siniestralidad muy elevada (61.17%) y, un coste medio por expediente muy alto de 821 € (frente a los 496 € del B2C). Esto indica que los siniestros que entran por B2B son considerablemente más graves o costosos de gestionar. Su ratio con comisión roza el límite técnico de la rentabilidad (92.95%). 
+Además, sufre un problema de **infratarificación**. Tienen más asegurados que el B2C (más de un millón), pero como cobran una prima media sumamente baja ($15,12$ € frente a los $51,86$ € del B2C), cualquier siniestro (que además es más caro, con un coste medio de $821$ €) desestabiliza por completo el ratio de siniestralidad del canal ($61,17\%$).
+
 Los corredores que se encuentran en esta tipología son *El mejor destino (AOA)* (puro), *Trotamundos (TRF)* (mix tipo canal), *Bienestar (BDF)* (mix tipo canal), *Viajes sorpresas (MOG)* (mix tipo canal) y  Lluvia de viajes (ANB) (mix tipo canal).
 
 
@@ -2200,9 +2207,9 @@ generar_tabla_rentabilidad_flex(primas_limpias_2 %>% filter(year(as.Date(policy_
 <br>
 <br>
 
-Por lo tanto, el análisis por canal de distribución revela diferencias en el modelo de negocio. El canal **B2C (Directo)** es el verdadero canal financiero de la compañía: no solo representa el mayor volumen de ingresos, sino que demuestra una gran estabilidad técnica a lo largo de los años, manteniendo su ratio combinado en torno al 80%-81% gracias a una siniestralidad muy contenida (41%), compensando con creces su alta tasa de comisión comercial.
+Por lo tanto, el análisis por canal de distribución revela diferencias en el modelo de negocio. El canal **B2C (Directo)** es el verdadero canal financiero de la compañía: no solo representa el mayor volumen de ingresos, sino que demuestra una gran estabilidad técnica a lo largo de los años, manteniendo su ratio combinado en torno al 80%-81% gracias a una siniestralidad muy contenida (41%), compensando con creces su alta tasa de comisión comercial. Incremento de prima media  ($46$ € -> $48$ € -> $58$ €)
 
-Por el contrario, el canal B2B representa un riesgo técnico severo. Aunque aporta un volumen de asegurados muy alto, está caracterizado por una alta siniestralidad (los siniestros superan sistemáticamente los 800 € de coste medio). 
+Por el contrario, el canal **B2B** representa un riesgo técnico severo. Aunque aporta un volumen de asegurados muy alto, está caracterizado por una alta siniestralidad (los siniestros superan sistemáticamente los 800 € de coste medio) y primas mucho más bajas. Además, el canal B2B sufrió un proceso sistemático de abaratamiento o devaluación de la prima por asegurado ($18$ € -> $15$ € -> $12$ €). 
 
 La evolución histórica demuestra que el modelo B2B se ha deteriorado hasta entrar en pérdidas técnicas en 2025 (Ratio Combinado de 100.26%). La drástica reducción de prima en este canal durante el último año parece una respuesta técnica acertada para proteger el margen global de la compañía, redirigiendo los esfuerzos hacia el canal B2C, el cual responde con un crecimiento altamente rentable.
 
@@ -2250,11 +2257,11 @@ Analizando la tabla histórica consolida la estructura real del portafolio de pr
 
 - Los dos grandes del portafolio **(AV y AV + anulación clásica)**: Entre el producto de Asistencia en Viaje básico (AV) y su versión combinada con cancelación (AV + anulación clásica) concentran más de 60.6 millones de € en primas, es decir, prácticamente el 98.7% del negocio total de la aseguradora.
 
-- El producto **AV** puro es el más rentable y masivo de todos: tiene un volumen enorme de asegurados (1.14M), un coste medio por siniestro bajo (476 €) y un excelente Ratio con Comisión del 80.93%.
+- El producto **AV** puro es el más rentable y masivo de todos: tiene un volumen enorme de asegurados (1.14M), prima media de 31 €, un coste medio por siniestro bajo (476 €) y un excelente Ratio con Comisión del 80.93%.
 
-- El producto **AV + anulación clásica** aporta volumen (25.2M €), pero sufre técnicamente más: su ratio de siniestralidad sube al 52.75% y su coste medio por expediente se eleva a 744 €. Añadir la cobertura de cancelación encarece notablemente la severidad de los siniestros.
+- El producto **AV + anulación clásica** aporta volumen (25.2M €), pero sufre técnicamente más: su ratio de siniestralidad sube al 52.75% y su coste medio por expediente se eleva a 744 €. Añadir la cobertura de cancelación encarece notablemente la siniestralidad de los siniestros.
 
-- El **peligro extremo de la antiselección (Multiviaje)**: El producto Multiviaje presenta un comportamiento técnico alarmante. Con apenas 20.902 € recaudados en primas, ha generado 96.156 € en siniestros,resultando en un Ratio de Siniestralidad del 460.03% y un coste medio por expediente desorbitado de 6.868 €. Esto es un síntoma claro de antiselección: pocos asegurados lo compran, pero los que lo hacen sufren percances extremadamente graves y costosos.
+- El **peligro extremo de la antiselección (Multiviaje)**: El producto Multiviaje presenta un comportamiento técnico alarmante. Con apenas 20.902 € recaudados en primas (a pesar de ser uno de los productos con prima media más alta), ha generado 96.156 € en siniestros,resultando en un Ratio de Siniestralidad del 460.03% y un coste medio por expediente desorbitado de 6.868 €. Esto es un síntoma claro de antiselección: pocos asegurados lo compran, pero los que lo hacen sufren percances extremadamente graves y costosos.
 
 <br>
 
@@ -2301,9 +2308,9 @@ En este año se muestran aquellos problemas que se vienene arrastrando a lo larg
 
 Por lo tanto, en conclusión, el análisis evolutivo por *Tipo de Producto* permite identificar con claridad la maduración técnica que ha experimentado la compañía entre 2023 y 2025.
 
-En primer lugar, los datos demuestran que el producto estrella (AV pura) es un motor financiero de una estabilidad impecable, manteniendo sus ratios de siniestralidad en la franja del 40% al 42% y su ratio combinado en torno al 80% de manera constante a lo largo de los tres años analizados. 
+En primer lugar, los datos demuestran que el producto estrella (AV pura) es un motor financiero de una estabilidad impecable, manteniendo sus ratios de siniestralidad en la franja del 40% al 42% y su ratio combinado en torno al 80% de manera constante a lo largo de los tres años analizados con incrementos de prima emtidia media (30 € -> 25 € -> 38 #). 
 
-Por su parte, el producto combinado AV + anulación clásica ha mostrado una notable mejora, logrando reducir su ratio con comisión desde un ajustado 91.77% en 2023 hasta un consolidado 84.61% en 2024, estabilizándose en 2025. Aunque no sería suficiente. EL objetivo sería un 80%.
+Por su parte, el producto combinado AV + anulación clásica, con una prima media de 39€ en 2025) ha mostrado una notable mejora, logrando reducir su ratio con comisión desde un ajustado 91.77% en 2023 hasta un consolidado 84.61% en 2024, estabilizándose en 2025. Aunque no sería suficiente. El objetivo sería un 80%.
 
 En segundo lugar,la perspectiva histórica permite entender las anomalías detectadas en el acumulado global.Las pérdidas siginficativas del producto *Multiviaje* no corresponden a una tendencia estructural actual, sino a un año 2023 trágico, donde un alto coste medio por expediente (22.250 €) que hizo que ese año el resultado del producto estuviese negativo. En los años posteriores (2024 y 2025), la compañía parece haber controlado este riesgo de forma notable
 
@@ -2359,14 +2366,16 @@ generar_tabla_rentabilidad <- function(datos, titulo) {
       Ratio_Siniestralidad = (Total_Siniestros / Total_Primas_Adq) * 100,
       Ratio_Con_Comision = Ratio_Siniestralidad + Pct_Comision,
       Coste_Medio = Total_Siniestros / Expedientes,
-      Tasa_Frecuencia = (Expedientes / Total_Asegurados) * 100
+      Tasa_Frecuencia = (Expedientes / Total_Asegurados) * 100,
+      Prima_Emitida_Media = Total_Primas / Total_Asegurados
+      
     ) %>%
     select(-Total_Comision) %>%
     arrange(desc(nom_cliente != "TOTAL"), desc(Total_Primas))
   
   # 4. Formateo
   tabla_formateada <- final_df %>%
-    mutate(across(c(Total_Primas, Total_Primas_Adq, Total_Siniestros, Coste_Medio), 
+    mutate(across(c(Total_Primas, Total_Primas_Adq, Total_Siniestros, Coste_Medio, Prima_Emitida_Media), 
                   ~ paste(format(round(., 0), big.mark = "."), "€"))) %>%
     mutate(across(c(Expedientes, Total_Asegurados), 
                   ~ format(round(., 0), big.mark = "."))) %>%
@@ -2409,11 +2418,11 @@ generar_tabla_rentabilidad(primas_limpias_2 %>% filter(year(as.Date(policy_start
 
 <br>
 
-Analizando la serie hist´roica acumulada muestra una dependencia de un único corredor, pero con buenas noticias técnicas:
+Analizando la serie histórica acumulada muestra una dependencia de un único corredor, pero con buenas noticias técnicas:
 
-- **Mundo ideal (MNO) es el motor de la compañía**. Concentra 41.014.927 € de la prima total (casi el 67% de todo el negocio histórico). A pesar de cobrar la comisión más alta de la cartera (40%), su comportamiento del riesgo es muy bueno: una siniestralidad del 40.28% que resulta en un cómodo Ratio con Comisión del 80.28%. Es el cliente más valioso y estable.
+- **Mundo ideal (MNO) es el motor de la compañía**. Concentra 41.014.927 € de la prima total (casi el 67% de todo el negocio histórico). A pesar de cobrar la comisión más alta de la cartera (40%), su comportamiento del riesgo es muy bueno: una siniestralidad del 40.28% que resulta en un cómodo Ratio con Comisión del 80.28%, además de contar con prima emitida media de 55 € que compensa su elevada comisión del 40%. Es el cliente más valioso y estable.
 
-- **Viajes sorpresas (MOG)**: Es el segundo corredor por volumen (13.6 millones de €). Sin embargo, su rentabilidad está muy ajustada debido a una alta siniestralidad (62.15%) y un coste medio por expediente elevado (848 €), dejando su ratio combinado al borde del equilibrio con un 94.18%.
+- **Viajes sorpresas (MOG)**: Es el segundo corredor por volumen (13.6 millones de €). Sin embargo, su rentabilidad está muy ajustada debido a una alta siniestralidad (62.15%), una prima media muy baja (15€) y un coste medio por expediente elevado (848 €), dejando su ratio combinado al borde del equilibrio con un 94.18%.
 
 <br>
 
@@ -2425,9 +2434,9 @@ Analizando la serie hist´roica acumulada muestra una dependencia de un único c
 
 Al revisar el último año, se puede ver un cambio drástico y significativo en la rentabilidad de los socios:
 
-- **Mundo ideal (MNO)**: Sigue muy estable, facturando 19.0 millones de € con un ratio combinado clavado en el 80.07%.
+- **Mundo ideal (MNO)**: Sigue muy estable, facturando 19.0 millones de € con un ratio combinado clavado en el 80.07%. Incrementao de de prima media (47 € -> 51 € -> 64 €) 
 
-- **Viajes sorpresas (MOG)**: Ese encuentra en pérdidas técnicas. Registró una prima de 2.2 millones de €, pero su ratio de siniestralidad escaló al 75.66% y el coste medio por siniestro se disparó a 1.027 €. Al sumarle su comisión, alcanzó un Ratio con Comisión del 107.02%.
+- **Viajes sorpresas (MOG)**: Ese encuentra en pérdidas técnicas. Registró una prima de 2.2 millones de €, pero su ratio de siniestralidad escaló al 75.66% y el coste medio por siniestro se disparó a 1.027 €. Al sumarle su comisión, alcanzó un Ratio con Comisión del 107.02%. Además prima promedio de 11€
 
 - **Trotamundos (TRF) en el límite**: Con 1.5 millones de € en primas, roza las pérdidas técnicas con un 99.63% de ratio combinado debido a una siniestralidad del 60.68%.
 
@@ -2440,7 +2449,7 @@ El año 2024 representa el ejercicio con mayor equilibrio entre los dos grandes 
 
 - **Mundo ideal (MNO)**: Aportó 13.1 millones de € con un ratio con comisión del 80.87%.
 
-- **Viajes sorpresas (MOG)**: Tuvo su mejor año histórico en volumen con 6.9 millones de €. Aunque su siniestralidad era alta (55.63%), su menor porcentaje de comisión (32.31%) le permitió cerrar el año en una zona segura (pero no suficiente) con un ratio combinado del 87.95%.
+- **Viajes sorpresas (MOG)**: Tuvo su mejor año histórico en volumen con 6.9 millones de €. Aunque su siniestralidad era alta (55.63%), su menor porcentaje de comisión (32.31%) le permitió cerrar el año en una zona segura (pero no suficiente) con un ratio combinado del 87.95%. No obstante, prima media más baja que en 2023.
 
 
 #### Año 2023:
@@ -2758,12 +2767,16 @@ https://github.com/mariamartineztorre13-bot/Proyecto-ND.git
 
 El desarrollo metodológico de este proyecto de investigación ha permitido construir un análisis completo, logrando una integración entre la ingeniería de datos en PostgreSQL, el análisis predictivo en Python y la inteligencia de negocio en Power BI. El primer paso del estudio se consolidó en la fase de base de datos, donde el proceso de extracción, transformación y carga actuó como un filtro de calidad importante. Esta fase inicial no solo resolvió anomalías estructurales severas, como registros de duración de viaje negativos o nulos que habrían sesgado cualquier análisis posterior, sino que permitió diseñar una capa semántica robusta. A través de la creación de vistas lógicas y tablas de dimensiones temporales, se logró homogeneizar el histórico transaccional del negocio, sirviendo de base limpia y fiable tanto para la formulación de los algoritmos de predicción como para la estructuración de la herramienta visual.
 
-Con esta base depurada, el modelado dimensional en estrella implementado en Power BI tradujo la complejidad técnica en una solución de control directivo sumamente intuitiva. El cálculo de métricas en lenguaje DAX facilitó los indicadores clave del sector, permitiendo analizar de manera dinámica cómo interactuaban las variables comerciales con la siniestralidad del portafolio. Esto desvela que la rentabilidad de la compañía no dependía del volumen de primas emitidas, sino de la estructura interna del riesgo y de los costes de adquisición asociados a los intermediarios de la cartera.
+Con esta base depurada, el modelado dimensional en estrella implementado en Power BI tradujo la complejidad técnica en una solución de control directivo sumamente intuitiva. El cálculo de métricas en lenguaje DAX facilitó los indicadores clave del sector, permitiendo analizar de manera dinámica cómo interactuaban las variables comerciales con la siniestralidad del portafolio. Esto desvela que la rentabilidad de la compañía no dependía del volumen de primas emitidas, sino de la estructura interna del riesgo, de la severa asimetría tarifaria entre canales y de los costes de adquisición asociados a los intermediarios de la cartera.
 
 El análisis avanzado y predictivo en Python terminó de descifrar las dinámicas de fondo del portafolio, confirmando hallazgos actuariales de enorme relevancia. El análisis exploratorio geométrico demostró que la siniestralidad del negocio posee una distribución de cola pesada extrema, donde más de un $75\%$ de los asegurados tienen un coste nulo, pero la siniestralidad activa está dominada por eventos médicos excepcionales en el extranjero que alcanzan picos individuales de hasta $389.782,27$ € en 2025. Este comportamiento justificó la aplicación de modelos logísticos de probabilidad de ocurrencia.
 
-La modelización econométrica resultante aportó una evidencia científica incontestable debido a la robustez y significatividad estadística de todos sus estimadores ($p = 0.000$). Los modelos logísticos desvelaron una marcada asimetría en la cartera: a nivel global, cada asegurado adicional en una póliza incrementa la probabilidad de siniestro en un $2.24\%$, mientras que cada día adicional de viaje lo hace en un $1.20\%$. 
-No obstante, el descubrimiento crítico reside en la segmentación geográfica,la cual demostró que el verdadero multiplicador de la siniestralidad es el destino. Mientras que en el destino Nacional el riesgo por persona adicional se sitúa en un moderado $+2.45\%$, en la modalidad Mundo se produce una explosión del $+13.57\%$ por asegurado adicional. Este efecto, combinado con la rigidez en las comisiones de los corredores —que mantuvieron una correlación casi perfecta de $0.99$ con la prima y un coste medio creciente del $38.2\%$ en 2025— y la acumulación de grupos asegurados grandes sin control técnico durante 2024 (caso MOG), explica de manera empírica la erosión histórica experimentada en los márgenes de rentabilidad de la compañía aseguradora.
+La modelización econométrica resultante aportó una evidencia científica incontestable debido a la robustez y significatividad estadística de todos sus estimadores ($p = 0.000$). Los modelos logísticos desvelaron una marcada asimetría en la cartera: a nivel global, cada asegurado adicional en una póliza incrementa la probabilidad de siniestro en un $2.24\%$, mientras que cada día adicional de viaje lo hace en un $1.20\%$. No obstante, el descubrimiento crítico reside en la segmentación geográfica,la cual demostró que el verdadero multiplicador de la siniestralidad es el destino. Mientras que en el destino Nacional el riesgo por persona adicional se sitúa en un moderado $+2.45\%$, en la modalidad Mundo se produce una explosión del $+13.57\%$ por asegurado adicional. 
+
+
+Mientras que Mundo Ideal (MNO) se consolidó como el pilar de solvencia de la aseguradora, aportando casi el $67\%$ del volumen histórico y compensando su comisión del $40\%$ gracias a un sólido poder de tarificación (escalando su prima media de $47$ € a $64$ € en 2025 para mantener su ratio combinado en el entorno del $80\%$), otros socios requirieron intervenciones directas de saneamiento. Un ejemplo paradigmático es Bienestar (BDF), el cual fue apartado de los primeros puestos comerciales tras registrar rentabilidades negativas en 2023 con un ratio combinado del $135.64\%$, impulsado por siniestros de una elevada severidad media ($1.268$ €). Por su parte, la severa asimetría de Viajes Sorpresas (MOG) (con tarifas de apenas $11$ € frente a costes de siniestro disparados a $1.027$ € en 2025) y las tensiones técnicas de Trotamundos (TRF) (rozando el límite del equilibrio con un $99.63\%$ de ratio combinado) demuestran que el volumen masivo sin suficiencia tarifaria destruye valor. Estos contrastes justifican plenamente la rescisión de cuentas deficitarias en 2025 y validan las excelentes métricas en nichos altamente rentables como Mundo Ideal Portugal (MNP), cuyo ratio histórico se mantuvo anclado en un excelente $75.57\%$.
+
+
 
 <br>
 
@@ -2771,10 +2784,18 @@ En cuanto a las **recomendaciones**, a partir de la evidencia empírica obtenida
 
 - Rediseñar las tarifas por destino, aplicando recargos exponenciales al incorporar personas adicionales en una misma póliza, especialmente en el destino Mundo ($OR = 1.1357$), compensando la alta probabilidad de ocurrencia en viajes internacionales.
 
-- Renegociación de acuerdo con corredores: estblecer cláusulas de comisiones variables vinculadas al Loss Ratio del mediador. Si un corredor aporta carteras con baja siniestralidad, mantiene su comisión; si su cartera genera pérdidas técnicas, su comisión se reduce para proteger el ratio combinado de la aseguradora.
+- Rediseñar tarifa para tipo de canal de distribución del seguro: en este caso B2B es el más afectado. Intentar tomar medidas no solo en tarificació n ya que este tipo de productos tienen primas muy bajas) sino un mayor control en le redactado de las condiciones generales y particualres para reducir impacto en siniestralidad.
+
+- Renegociación de acuerdo con corredores: establecer cláusulas de comisiones variables vinculadas al Loss Ratio del mediador. Si un corredor aporta carteras con baja siniestralidad, mantiene su comisión; si su cartera genera pérdidas técnicas, su comisión se reduce para proteger el ratio combinado de la aseguradora.
 
 - Limitaciones del número de asegurados por pólizas o establecer recargos en este tipo de pólizas.
 
+
+<br>
+
+Por otro lado, cabe destacar que, aunque en este proyecto de investigación no se ha abordado de forma directa la implementación de modelos de aprendizaje automático (Machine Learning), la arquitectura lógica y el modelado predictivo desarrollados sientan las bases metodológicas óptimas para su despliegue futuro.
+
+La incorporación de técnicas de análisis no supervisado, como el análisis de componentes principales (PCA) o algoritmos de agrupamiento de datos (K-means), facilitaría segmentar dinámicamente la cartera de asegurados para descubrir de forma automática nuevos perfiles de riesgo y patrones de comportamiento de clientes que escapan al análisis estadístico paramétrico ordinario. Asimismo, clasificadores avanzados y altamente flexibles como los Árboles de Decisión o Random Forest permitirían capturar interacciones complejas, dependencias no lineales y colas de riesgo severas de la siniestralidad, superando las rigideces tradicionales de la regresión logística clásica y abriendo el camino hacia un y pricing automatizado en tiempo real. Este salto metodológico y tecnológico, no obstante, se encuentra supeditado a la superación de una serie de barreras técnicas de datos y modelado.
 
 <br>
  
